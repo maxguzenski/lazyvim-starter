@@ -4,13 +4,14 @@
 
 -- OrganizeImports on save
 vim.api.nvim_create_autocmd("BufWritePre", {
-  buffer = buffer,
+  group = vim.api.nvim_create_augroup("ts_imports", { clear = true }),
+  pattern = { "*.ts", "*.js", "*.svelte", "*.svelte.js", "*.jsx" },
   callback = function()
-    vim.lsp.buf.code_action({
-      ---@diagnostic disable-next-line: missing-fields
-      context = { only = { "source.organizeImports" } },
-      apply = true,
-    })
-    vim.wait(100)
+    vim.lsp.buf.code_action({ apply = true, context = { only = { "source.addMissingImports.ts" }, diagnostics = {} } })
+    vim.lsp.buf.code_action({ apply = true, context = { only = { "source.removeUnused.ts" }, diagnostics = {} } })
   end,
 })
+
+-- disable spellcheck
+-- use "set spell" to enable
+vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
